@@ -1,4 +1,4 @@
-1. Last Updated: 22-02-2026
+1. Last Updated: 23-02-2026
 2. Session #: 3
 
 ---
@@ -14,6 +14,7 @@
 - Tailwind CSS + shadcn/ui (Radix) — custom `ocean-*` colour palette in `tailwind.config.ts`
 - All types centralised in `src/types/index.ts`
 - Single migration file: `supabase/migrations/001_initial_schema.sql`
+- Local dev environment fully working
 
 ### Features Implemented
 - **Customer booking flow** — 8-step multi-step form (trip type → slot/course → gear → cert → medical → waiver → personal details → Stripe payment). Booking record created at step 7; Stripe webhook confirms on payment.
@@ -28,6 +29,8 @@
 - **Auth guard** — `src/middleware.ts` protects all `/admin/*` routes
 
 ### Infrastructure and Tooling
+- Supabase project created, migration run, admin user seeded
+- Stripe CLI installed, webhook forwarding configured for local dev (`stripe listen --forward-to localhost:3000/api/stripe/webhook`)
 - RLS enabled on all tables; public policies allow insert for booking flow, read for open slots/active catalog
 - Service role client (`createServiceClient()`) used in API routes that bypass RLS
 - Auth-scoped client (`createClient()`) used in server components and admin reads
@@ -42,52 +45,62 @@
 - `CertificationRecord` linked to `customer_id`, not `booking_id`
 - Gear rental has no separate price — included in trip/course fee
 - Course bookings do NOT lock staff members (course capacity is independent)
+- Supabase client library: `@supabase/ssr` (replaced `@supabase/auth-helpers-nextjs` which was incompatible)
 
 ---
 
-## 2. Last Session Progress
+## 2. Previous Session Plan
+
+To be defined.
+
+---
+
+## 3. Previous Session Progress
 
 ### Tasks Worked On
-- Located missing PRD (was not committed to git; user re-provided it)
-- Created `.claude/context.md` with full codebase documentation
-- Updated `.claude/prd.md` to reflect current implementation (major divergence from original)
+- Created `.claude/context.md` and `.claude/prd.md` (documentation)
+- Set up local development environment end-to-end
+- Debugged and fixed 4 separate startup errors
 
 ### Code Changes Made
-- `.claude/context.md` — created (project reference doc: stack, structure, schema, conventions)
-- `.claude/prd.md` — major rewrite: updated data model, capacity engine, added onboarding wizard section, resolved open questions, updated verification plan
+- `next.config.ts` → deleted; `next.config.mjs` created (Next.js 14 does not support `.ts` config files)
+- `src/lib/supabase/client.ts` — updated import from `@supabase/auth-helpers-nextjs` → `@supabase/ssr`
+- `src/lib/supabase/server.ts` — updated import from `@supabase/auth-helpers-nextjs` → `@supabase/ssr`
+- `src/lib/supabase/middleware.ts` — rewrote to use `createServerClient` from `@supabase/ssr`
+- `src/middleware.ts` — rewrote to use `createServerClient` from `@supabase/ssr`
+- `src/app/admin/layout.tsx` — removed duplicate session check that caused infinite redirect loop on `/admin/login`
+- `autoprefixer` and `@supabase/ssr` installed via npm
 
 ### Key Decisions
-- Established `.claude/context.md` as session-continuity document, updated via `/handover` skill at end of each session
-- `.claude/prd.md` is the source-of-truth PRD going forward
+- Migrated entirely from `@supabase/auth-helpers-nextjs` to `@supabase/ssr` — the auth-helpers package did not export `createServerClient` at the installed version
+- Auth protection handled solely by middleware; removed redundant check from admin layout
 
 ### Current System State
-- **Works**: all core features appear implemented and wired up end-to-end
-- **Partially works / unknown**: email routes exist but content/templates not reviewed; cert file upload flow exists in UI but storage bucket setup not verified
-- **Broken / missing**: `src/app/admin/schedule` is an empty directory (no `page.tsx`); `src/app/api/courses` is an empty directory; `src/hooks` is an empty directory
-- **Known gaps**: medical declaration questions not defined (responses stored as free JSONB); waiver text is a placeholder; refund policy not configurable
+- **Works**: home page, admin login, local dev server (`npm run dev`), Stripe webhook listener
+- **Not yet tested end-to-end**: onboarding wizard, booking flow, admin dashboard, email sending
+- **Broken / missing**: `src/app/admin/schedule` empty directory (no page); `src/app/api/courses` empty directory; `src/hooks` empty directory
+- **Known gaps**: medical declaration questions not defined (free JSONB); waiver text is a placeholder; refund policy not configurable; cert file upload storage bucket not verified
 - **No tests** exist anywhere in the codebase
 
 ---
 
-## 3. Incomplete / Actionable Items
+## 4. Incomplete / Actionable Items
 
 ### High Priority
-- Verify Supabase storage bucket is configured for cert card file uploads (referenced in UI but not confirmed)
-- Clarify purpose of `src/app/admin/schedule` empty page — either implement or delete the stub directory
+- Walk through onboarding wizard end-to-end and verify it saves correctly to Supabase
+- Verify Supabase storage bucket is configured for cert card file uploads
+- Test booking flow end-to-end with Stripe test card
 
 ### Medium Priority
-- `src/app/api/courses` — empty directory, unclear intent (courses are managed via catalog; may be a leftover stub)
-- Define medical declaration questions (currently free JSONB — needs a fixed question set)
+- `src/app/admin/schedule` — empty directory, clarify intent or delete
+- `src/app/api/courses` — empty directory, likely a stub, delete if unused
+- Define medical declaration questions (currently free JSONB)
 - Supply waiver legal text (currently placeholder)
-- Make Stripe refund policy configurable per shop (currently always full refund on cancel)
 
 ### Low Priority / Nice-to-have
-- `src/hooks` — empty directory, can be deleted if unused
-- Add a test framework (none exists)
-- Cert upload verification flow (admin can see `verified: false` but no UI to mark as verified)
+- `src/hooks` — empty directory, delete if unused
+- Add a test framework
+- Cert upload verification UI (admin can see `verified: false` but no way to mark as verified)
 
----
 
-## 4. Next Session Plan
 
-To be defined.

@@ -60,7 +60,7 @@ Avoid narrative explanation.
 
 Update the project progress accomplished in this session concisely and structurally under:
 
-## 2. Last Session Progress
+## 3. Previous Session Progress
 
 Include:
 
@@ -87,11 +87,23 @@ This section must allow a new agent to start working immediately without re-read
 
 ---
 
-## STEP 4 — Identify Incomplete Work
+## Step 4. Identify Incomplete Work
 
-Add:
+1. Locate the initial session plan under:
 
-## 3. Incomplete / Actionable Items
+## 2. Previous Session Plan
+
+and the actual work completed under:
+
+## 3. Previous Session Progress
+
+2. Compare each planned step with the actual progress:
+   - If a step was **fully completed**, mark it as done.  
+   - If a step was **partially completed** or **not started**, it should be included in the next section as incomplete.
+
+3. Use this comparison to generate:
+
+## 4. Incomplete / Actionable Items
 
 Group under:
 
@@ -99,40 +111,7 @@ Group under:
 ### Medium Priority
 ### Low Priority / Nice-to-have
 
-These must reflect unfinished items from THIS session.
-
----
-
-## STEP 5 — Propose Plan for Next Session
-
-Using the updated `.claude/context.md`, propose a structured plan for the next session.
-
-Constraints:
-- Be realistic about my Claude token limits under my current subscription (lowest tier).
-- Prioritise high-leverage tasks.
-- Prioritise finishing incomplete work before new features.
-- Avoid scope creep.
-
-Return the plan to the terminal first.
-
-Structure:
-
-### Proposed Plan for Session X+1
-
-Step 1:
-Step 2:
-Step 3:
-
-After presenting the plan:
-- Workshop it with the user.
-- Refine based on feedback.
-- Once confirmed, save it under:
-
-## 4. Next Session Plan
-
-inside `.claude/context.md`.
-
-Do NOT save a draft plan. Only save the confirmed version.
+Ensure that this list ONLY contains items that remain incomplete from THIS session. Do not include completed tasks.
 
 ---
 
