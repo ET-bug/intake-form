@@ -4,7 +4,8 @@
       "Bash(python3:*)",
       "Bash(npm install:*)",
       "Bash(npx tsc:*)",
-      "Bash(brew list:*)"
+      "Bash(brew list:*)",
+      "WebFetch(domain:docs.anthropic.com)"
     ]
   }
 }
